@@ -7,6 +7,9 @@ app = "skaz"
 primary_region = "sin"
 kill_signal = "SIGTERM"
 
+[build]
+  image = "ghcr.io/ruslandoga/skaz:master"
+
 [env]
   PHX_HOST = "skaz.fly.dev"
   PORT = "8080"
