@@ -26,10 +26,11 @@ defmodule SkazWeb.Router do
     live "/messages", MessageLive.Index, :index
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", SkazWeb do
-  #   pipe_through :api
-  # end
+  scope "/api/bot", SkazWeb do
+    pipe_through :api
+
+    post "/:token", BotController, :webhook
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:skaz, :dev_routes) do
