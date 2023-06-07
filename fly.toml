@@ -10,7 +10,12 @@ kill_signal = "SIGTERM"
 [env]
   PHX_HOST = "skaz.fly.dev"
   PORT = "8080"
-  DATABASE_PATH = "/app/skaz.db"
+  DATABASE_PATH = "/data/skaz.db"
+
+[[mounts]]
+  source = "skaz"
+  destination = "/data"
+  processes = ["app"]
 
 [http_service]
   internal_port = 8080
