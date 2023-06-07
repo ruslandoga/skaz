@@ -10,12 +10,14 @@ defmodule Skaz.Application do
     children = [
       # Start the Telemetry supervisor
       SkazWeb.Telemetry,
+      %{id: :migrate, start: {__MODULE__, :migrate, []}},
       # Start the Ecto repository
       Skaz.Repo,
       # Start the PubSub system
       {Phoenix.PubSub, name: Skaz.PubSub},
       # Start Finch
-      {Finch, name: Skaz.Finch},
+      {Finch, name: Skaz.finch()},
+      {Bot.Poller, handler: Skaz.Bot},
       # Start the Endpoint (http/https)
       SkazWeb.Endpoint
       # Start a worker by calling: Skaz.Worker.start_link(arg)
@@ -34,5 +36,11 @@ defmodule Skaz.Application do
   def config_change(changed, _new, removed) do
     SkazWeb.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  @doc false
+  def migrate do
+    Skaz.Release.migrate()
+    :ignore
   end
 end

@@ -20,6 +20,27 @@ if System.get_env("PHX_SERVER") do
   config :skaz, SkazWeb.Endpoint, server: true
 end
 
+if config_env() in [:dev, :prod] do
+  config :skaz,
+    tg_bot_token: System.fetch_env!("TG_BOT_TOKEN"),
+    tg_owner_id: String.to_integer(System.fetch_env!("TG_OWNER_ID"))
+end
+
+basic_auth =
+  if config_env() == :prod do
+    [
+      username: System.fetch_env!("BASIC_AUTH_USERNAME"),
+      password: System.fetch_env!("BASIC_AUTH_PASSWORD")
+    ]
+  else
+    [
+      username: "username",
+      password: "password"
+    ]
+  end
+
+config :skaz, basic_auth: basic_auth
+
 if config_env() == :prod do
   database_path =
     System.get_env("DATABASE_PATH") ||
