@@ -14,6 +14,9 @@ defmodule Skaz do
   @spec tg_bot_token :: String.t()
   def tg_bot_token, do: Application.fetch_env!(@app, :tg_bot_token)
 
+  @spec set_tg_webhook? :: boolean
+  def set_tg_webhook?, do: Application.fetch_env!(@app, :set_tg_webhook?)
+
   @spec basic_auth :: [username: String.t(), username: String.t()]
   def basic_auth, do: Application.fetch_env!(@app, :basic_auth)
 end

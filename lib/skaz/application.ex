@@ -46,7 +46,10 @@ defmodule Skaz.Application do
 
   @doc false
   def webhook do
-    Skaz.Release.set_bot_webhook()
+    if Skaz.set_tg_webhook?() do
+      Skaz.Release.set_bot_webhook()
+    end
+
     :ignore
   end
 end

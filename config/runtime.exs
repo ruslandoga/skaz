@@ -24,6 +24,8 @@ if System.get_env("PHX_SERVER") do
   config :skaz, SkazWeb.Endpoint, server: true
 end
 
+config :skaz, set_tg_webhook?: config_env() in [:dev, :prod]
+
 if config_env() in [:dev, :prod] do
   config :skaz,
     tg_bot_token: System.fetch_env!("TG_BOT_TOKEN"),
