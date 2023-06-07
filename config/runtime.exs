@@ -7,6 +7,10 @@ import Config
 # any compile-time configuration in here, as it won't be applied.
 # The block below contains prod specific runtime configuration.
 
+config :sentry,
+  environment_name: config_env(),
+  included_environments: []
+
 # ## Using releases
 #
 # If you use `mix release`, you need to explicitly enable the server
@@ -129,4 +133,9 @@ if config_env() == :prod do
   #     config :swoosh, :api_client, Swoosh.ApiClient.Hackney
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
+
+  if dns = System.get_env("SENTRY_DSN") do
+    config :logger, backends: [:console, Sentry.LoggerBackend]
+    config :sentry, dsn: dns, included_environments: [:prod]
+  end
 end
