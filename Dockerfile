@@ -27,7 +27,7 @@ RUN mix deps.compile
 # compile project
 COPY priv priv
 COPY lib lib
-RUN mix compile
+RUN mix do compile, deps.compile sentry --force
 
 # compile assets
 COPY assets assets

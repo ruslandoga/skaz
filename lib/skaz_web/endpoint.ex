@@ -1,4 +1,5 @@
 defmodule SkazWeb.Endpoint do
+  use Sentry.PlugCapture
   use Phoenix.Endpoint, otp_app: :skaz
 
   # The session will be stored in the cookie and signed,
@@ -47,5 +48,6 @@ defmodule SkazWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
+  plug Sentry.PlugContext
   plug SkazWeb.Router
 end
