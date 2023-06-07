@@ -7,9 +7,6 @@ app = "skaz"
 primary_region = "sin"
 kill_signal = "SIGTERM"
 
-[deploy]
-  release_command = "/app/bin/migrate"
-
 [env]
   PHX_HOST = "skaz.fly.dev"
   PORT = "8080"

@@ -20,6 +20,12 @@ defmodule SkazWeb.Router do
     get "/", PageController, :home
   end
 
+  scope "/", SkazWeb do
+    pipe_through [:browser, :basic_auth]
+
+    live "/messages", MessageLive.Index, :index
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", SkazWeb do
   #   pipe_through :api
@@ -40,5 +46,9 @@ defmodule SkazWeb.Router do
       live_dashboard "/dashboard", metrics: SkazWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
+  end
+
+  def basic_auth(conn, _opts) do
+    Plug.BasicAuth.basic_auth(conn, Skaz.basic_auth())
   end
 end
