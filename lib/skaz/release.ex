@@ -4,6 +4,7 @@ defmodule Skaz.Release do
   installed.
   """
   @app :skaz
+  use SkazWeb, :verified_routes
 
   def migrate do
     load_app()
@@ -24,5 +25,15 @@ defmodule Skaz.Release do
 
   defp load_app do
     Application.load(@app)
+  end
+
+  def set_bot_webhook do
+    url = SkazWeb.Endpoint.url() <> ~p"/api/bot/#{Skaz.tg_bot_token()}"
+
+    case Bot.set_webhook(url) do
+      {:ok, %Finch.Response{status: 200}} -> :ok
+      {:ok, resp} -> raise "failed to set webhook to #{url}: #{inspect(resp)}"
+      {:error, error} -> raise "failed to set webhook to #{url}: #{error}"
+    end
   end
 end

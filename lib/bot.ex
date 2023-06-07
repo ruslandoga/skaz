@@ -7,4 +7,10 @@ defmodule Bot do
     payload = Enum.into(opts, %{"chat_id" => chat_id, "text" => text})
     API.request("sendMessage", payload)
   end
+
+  # https://core.telegram.org/bots/api#setwebhook
+  def set_webhook(url, opts \\ []) do
+    payload = Enum.into(opts, %{"url" => url})
+    API.request("setWebhook", payload)
+  end
 end

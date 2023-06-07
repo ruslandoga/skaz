@@ -17,9 +17,9 @@ defmodule Skaz.Application do
       {Phoenix.PubSub, name: Skaz.PubSub},
       # Start Finch
       {Finch, name: Skaz.finch()},
-      {Bot.Poller, handler: Skaz.Bot},
       # Start the Endpoint (http/https)
-      SkazWeb.Endpoint
+      SkazWeb.Endpoint,
+      %{id: :webhook, start: {__MODULE__, :webhook, []}}
       # Start a worker by calling: Skaz.Worker.start_link(arg)
       # {Skaz.Worker, arg}
     ]
@@ -41,6 +41,12 @@ defmodule Skaz.Application do
   @doc false
   def migrate do
     Skaz.Release.migrate()
+    :ignore
+  end
+
+  @doc false
+  def webhook do
+    Skaz.Release.set_bot_webhook()
     :ignore
   end
 end
