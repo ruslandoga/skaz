@@ -4,9 +4,22 @@ defmodule SkazWeb.MessageLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <.table id="messages" rows={@streams.messages}>
-      <:col :let={{_id, message}} label="JSON"><pre><%= pretty_json(message.json) %></pre></:col>
-    </.table>
+    <table>
+      <thead class="text-left border-b">
+        <tr class="sticky top-0 bg-stone-100 dark:bg-stone-800">
+          <th class="p-2 border-b">Date</th>
+          <th class="p-2 border-b">Message</th>
+        </tr>
+      </thead>
+      <tbody id="messages" phx-update="stream" class="space-y-1">
+        <%= for {id, message} <- @streams.messages do %>
+          <tr id={id} class="border-t text-sm">
+            <td class="p-2 whitespace-nowrap font-semibold"><%= message.date %></td>
+            <td class="p-2"><%= message.content %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
     """
   end
 
@@ -26,11 +39,16 @@ defmodule SkazWeb.MessageLive.Index do
 
   defp list_messages do
     import Ecto.Query, only: [from: 2]
-    q = from m in "tg_messages", order_by: [desc: m.rowid], select: %{id: m.rowid, json: m.json}
-    Skaz.Repo.all(q)
-  end
 
-  defp pretty_json(json) do
-    json |> Jason.decode!() |> Jason.encode_to_iodata!(pretty: true)
+    q =
+      from m in "tg_messages",
+        order_by: [desc: m.rowid],
+        select: %{
+          id: m.rowid,
+          date: fragment("datetime(? -> 'message' -> 'date', 'unixepoch')", m.json),
+          content: fragment("? -> 'message' ->> 'text'", m.json)
+        }
+
+    Skaz.Repo.all(q)
   end
 end

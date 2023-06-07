@@ -24,7 +24,7 @@ if System.get_env("PHX_SERVER") do
   config :skaz, SkazWeb.Endpoint, server: true
 end
 
-config :skaz, set_tg_webhook?: config_env() in [:dev, :prod]
+config :skaz, set_tg_webhook?: config_env() in [:prod]
 
 if config_env() in [:dev, :prod] do
   config :skaz,
