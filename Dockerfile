@@ -38,6 +38,8 @@ COPY config/runtime.exs config/
 COPY rel rel
 RUN mix release
 
+FROM litestream/litestream:0.3.9 AS litestream
+
 FROM alpine:3.18.0
 
 RUN apk add --no-cache --update openssl libstdc++ ncurses
@@ -46,8 +48,10 @@ WORKDIR "/app"
 
 ENV MIX_ENV="prod"
 COPY --from=builder /app/_build/${MIX_ENV}/rel/skaz ./
+COPY --from=litestream /usr/local/bin/litestream /usr/local/bin/litestream
+COPY litestream.yml /etc/litestream.yml
 
 RUN adduser -H -S -u 999 -G nogroup -g '' skaz
 USER 999
 
-CMD ["/app/bin/server"]
+CMD litestream restore -if-db-not-exists -if-replica-exists $DATABASE_PATH && litestream replicate -exec "/app/bin/server"
