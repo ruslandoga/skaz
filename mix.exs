@@ -67,7 +67,6 @@ defmodule Skaz.MixProject do
         "ecto.migrate --log-migrations-sql"
       ],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["cmd npm ci --prefix assets"],
       "assets.deploy": [
         "cmd npm ci --prefix assets",

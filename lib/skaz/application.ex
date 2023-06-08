@@ -40,7 +40,10 @@ defmodule Skaz.Application do
 
   @doc false
   def migrate do
-    Skaz.Release.migrate()
+    if Skaz.migrate?() do
+      Skaz.Release.migrate()
+    end
+
     :ignore
   end
 

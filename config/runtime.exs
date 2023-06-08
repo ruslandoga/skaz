@@ -24,7 +24,8 @@ if System.get_env("PHX_SERVER") do
   config :skaz, SkazWeb.Endpoint, server: true
 end
 
-config :skaz, set_tg_webhook?: config_env() in [:prod]
+config :skaz, set_tg_webhook?: config_env() == :prod
+config :skaz, migrate?: config_env() != :test
 
 if config_env() in [:dev, :prod] do
   config :skaz,
@@ -140,4 +141,17 @@ if config_env() == :prod do
     config :logger, backends: [:console, Sentry.LoggerBackend]
     config :sentry, dsn: dns, included_environments: [:prod]
   end
+end
+
+if config_env() == :test do
+  migrations = Migrator.migrations(Skaz.Repo)
+
+  config :skaz, Skaz.Repo,
+    after_connect: fn conn ->
+      Migrator.prepare(conn: conn, repo: Skaz.Repo)
+
+      Enum.each(migrations, fn {version, mod} ->
+        Ecto.Migration.Runner.run(Migrator, [], version, mod, :forward, :change, :up, [])
+      end)
+    end
 end

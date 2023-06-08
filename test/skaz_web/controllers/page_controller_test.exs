@@ -1,5 +1,5 @@
 defmodule SkazWeb.PageControllerTest do
-  use SkazWeb.ConnCase
+  use SkazWeb.ConnCase, async: true
 
   test "GET /", %{conn: conn} do
     conn = get(conn, ~p"/")

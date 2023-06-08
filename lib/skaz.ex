@@ -11,12 +11,14 @@ defmodule Skaz do
 
   def finch, do: __MODULE__.Finch
 
-  @spec tg_bot_token :: String.t()
-  def tg_bot_token, do: Application.fetch_env!(@app, :tg_bot_token)
+  keys = [
+    :migrate?,
+    :tg_bot_token,
+    :set_tg_webhook?,
+    :basic_auth
+  ]
 
-  @spec set_tg_webhook? :: boolean
-  def set_tg_webhook?, do: Application.fetch_env!(@app, :set_tg_webhook?)
-
-  @spec basic_auth :: [username: String.t(), username: String.t()]
-  def basic_auth, do: Application.fetch_env!(@app, :basic_auth)
+  for key <- keys do
+    def unquote(key)(), do: Application.fetch_env!(@app, unquote(key))
+  end
 end
