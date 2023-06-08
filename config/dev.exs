@@ -22,8 +22,8 @@ config :skaz, SkazWeb.Endpoint,
   debug_errors: true,
   secret_key_base: "1XuVt1l4lOB1d45EbDTSLcgRD8/Dd5gpIJluQNlNnnSbzzw7N+VfhV6aJWdA3JrG",
   watchers: [
-    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
-    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
+    npm: ["run", "watch:js", cd: Path.expand("../assets", __DIR__)],
+    npm: ["run", "watch:css", cd: Path.expand("../assets", __DIR__)]
   ]
 
 # ## SSL Support
