@@ -5,15 +5,15 @@ defmodule SkazWeb.MessageLive.Index do
   def render(assigns) do
     ~H"""
     <table>
-      <thead class="text-left border-b">
+      <thead class="text-left border-b dark:border-stone-600">
         <tr class="sticky top-0 bg-stone-100 dark:bg-stone-800">
-          <th class="p-2 border-b">Date</th>
-          <th class="p-2 border-b">Message</th>
+          <th class="p-2 border-b dark:border-stone-600">Date</th>
+          <th class="p-2 border-b dark:border-stone-600">Message</th>
         </tr>
       </thead>
       <tbody id="messages" phx-update="stream" class="space-y-1">
         <%= for {id, message} <- @streams.messages do %>
-          <tr id={id} class="border-t text-sm">
+          <tr id={id} class="border-t dark:border-stone-600 text-sm">
             <td class="p-2 whitespace-nowrap font-semibold"><%= message.date %></td>
             <td class="p-2"><%= message.content %></td>
           </tr>
