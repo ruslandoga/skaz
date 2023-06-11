@@ -50,7 +50,8 @@ defmodule Skaz.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:dialyxir, "~> 1.3", only: [:dev], runtime: false},
       {:sentry, "~> 8.0"},
-      {:earmark, "~> 1.4"}
+      {:earmark, "~> 1.4"},
+      {:oban, "~> 2.15"}
     ]
   end
 

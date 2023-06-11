@@ -8,21 +8,22 @@ defmodule Skaz.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      # Start the Telemetry supervisor
       SkazWeb.Telemetry,
       %{id: :migrate, start: {__MODULE__, :migrate, []}},
-      # Start the Ecto repository
       Skaz.Repo,
-      # Start the PubSub system
+      {Oban, Application.fetch_env!(:skaz, Oban)},
       {Phoenix.PubSub, name: Skaz.PubSub},
-      # Start Finch
       {Finch, name: Skaz.finch()},
-      # Start the Endpoint (http/https)
       SkazWeb.Endpoint,
       %{id: :webhook, start: {__MODULE__, :webhook, []}}
-      # Start a worker by calling: Skaz.Worker.start_link(arg)
-      # {Skaz.Worker, arg}
     ]
+
+    :telemetry.attach(
+      "oban-errors",
+      [:oban, :job, :exception],
+      &Skaz.ErrorReporter.handle_event/4,
+      []
+    )
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options

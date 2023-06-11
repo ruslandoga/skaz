@@ -10,6 +10,11 @@ import Config
 config :skaz,
   ecto_repos: [Skaz.Repo]
 
+config :skaz, Oban,
+  engine: Oban.Engines.Lite,
+  queues: [default: 10],
+  repo: Skaz.Repo
+
 # Configures the endpoint
 config :skaz, SkazWeb.Endpoint,
   url: [host: "localhost"],

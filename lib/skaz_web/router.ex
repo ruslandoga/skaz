@@ -24,6 +24,7 @@ defmodule SkazWeb.Router do
     pipe_through [:browser, :basic_auth]
 
     live "/messages", MessageLive.Index, :index
+    live "/messages/:id", MessageLive.Index, :show
   end
 
   scope "/api/bot", SkazWeb do

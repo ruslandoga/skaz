@@ -18,6 +18,12 @@ defmodule SkazWeb.MessageLive.Index do
             <td class="p-2 whitespace-nowrap font-semibold"><%= message.date %></td>
             <td class="p-2 prose dark:prose-invert w-full"><%= message.content %></td>
             <td class="p-2 font-semibold flex">
+              <.link
+                patch={~p"/messages/#{message.id}"}
+                class="m-1 px-1 py-0.5 rounded border bg-gray-100 hover:bg-gray-200 transition"
+              >
+                show
+              </.link>
               <button class="m-1 px-1 py-0.5 rounded border bg-gray-100 hover:bg-gray-200 transition">
                 todo
               </button>
@@ -29,6 +35,14 @@ defmodule SkazWeb.MessageLive.Index do
         <% end %>
       </tbody>
     </table>
+
+    <%= if @message do %>
+      <.modal id="show-message" on_cancel={JS.patch(~p"/messages")} show={@message}>
+        <div class="prose">
+          <pre><%= Jason.decode!(@message.json) |> Jason.encode_to_iodata!(pretty: true) %></pre>
+        </div>
+      </.modal>
+    <% end %>
     """
   end
 
@@ -43,7 +57,25 @@ defmodule SkazWeb.MessageLive.Index do
   end
 
   defp apply_action(socket, :index, _params) do
-    assign(socket, :page_title, "Listing Messages")
+    socket
+    |> assign(:page_title, "messages")
+    |> assign(:message, nil)
+  end
+
+  defp apply_action(socket, :show, %{"id" => rowid}) do
+    if message = get_message(rowid) do
+      socket
+      |> assign(:page_title, "message ##{rowid}")
+      |> assign(:message, message)
+    else
+      socket |> put_flash(:error, "message not found") |> push_patch(to: ~p"/messages")
+    end
+  end
+
+  defp get_message(rowid) do
+    import Ecto.Query, only: [from: 2]
+    q = from(m in "tg_messages", where: m.rowid == ^rowid, select: %{json: m.json})
+    Skaz.Repo.one(q)
   end
 
   defp list_messages do
@@ -52,7 +84,6 @@ defmodule SkazWeb.MessageLive.Index do
     q =
       from(m in "tg_messages",
         order_by: [desc: m.rowid],
-        where: fragment("? -> 'message' ->> 'text'", m.json) != "",
         select: %{
           id: m.rowid,
           date: fragment("datetime(? -> 'message' -> 'date', 'unixepoch')", m.json),
@@ -62,9 +93,13 @@ defmodule SkazWeb.MessageLive.Index do
 
     Skaz.Repo.all(q)
     |> Enum.map(fn %{content: content} = message ->
-      case Earmark.as_html(content) do
-        {:ok, html, _} -> %{message | content: {:safe, html}}
-        _error -> message
+      if content do
+        case Earmark.as_html(content) do
+          {:ok, html, _} -> %{message | content: {:safe, html}}
+          _error -> message
+        end
+      else
+        message
       end
     end)
   end

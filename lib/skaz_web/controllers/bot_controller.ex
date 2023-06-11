@@ -1,7 +1,9 @@
 defmodule SkazWeb.BotController do
   use SkazWeb, :controller
 
-  def webhook(conn, %{"token" => token} = params) do
+  def webhook(conn, params) do
+    {token, params} = Map.pop(params, "token")
+
     if Skaz.tg_bot_token() == token do
       Skaz.Bot.handle_message(params)
     end
