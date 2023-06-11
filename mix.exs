@@ -39,7 +39,7 @@ defmodule Skaz.MixProject do
       {:phoenix_html, "~> 3.3"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 0.19.0"},
-      {:floki, ">= 0.30.0", only: :test},
+      {:floki, ">= 0.30.0"},
       {:phoenix_live_dashboard, "~> 0.8.0"},
       {:swoosh, "~> 1.3"},
       {:finch, "~> 0.13"},
@@ -49,7 +49,8 @@ defmodule Skaz.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:dialyxir, "~> 1.3", only: [:dev], runtime: false},
-      {:sentry, "~> 8.0"}
+      {:sentry, "~> 8.0"},
+      {:earmark, "~> 1.4"}
     ]
   end
 

@@ -9,13 +9,22 @@ defmodule SkazWeb.MessageLive.Index do
         <tr class="sticky top-0 bg-stone-100 dark:bg-stone-800">
           <th class="p-2 border-b dark:border-stone-600">Date</th>
           <th class="p-2 border-b dark:border-stone-600">Message</th>
+          <th></th>
         </tr>
       </thead>
       <tbody id="messages" phx-update="stream" class="space-y-1">
         <%= for {id, message} <- @streams.messages do %>
           <tr id={id} class="border-t dark:border-stone-600 text-sm">
             <td class="p-2 whitespace-nowrap font-semibold"><%= message.date %></td>
-            <td class="p-2"><%= message.content %></td>
+            <td class="p-2 prose dark:prose-invert w-full"><%= message.content %></td>
+            <td class="p-2 font-semibold flex">
+              <button class="m-1 px-1 py-0.5 rounded border bg-gray-100 hover:bg-gray-200 transition">
+                todo
+              </button>
+              <button class="m-1 px-1 py-0.5 rounded border bg-gray-100 hover:bg-gray-200 transition">
+                paper
+              </button>
+            </td>
           </tr>
         <% end %>
       </tbody>
@@ -41,14 +50,22 @@ defmodule SkazWeb.MessageLive.Index do
     import Ecto.Query, only: [from: 2]
 
     q =
-      from m in "tg_messages",
+      from(m in "tg_messages",
         order_by: [desc: m.rowid],
+        where: fragment("? -> 'message' ->> 'text'", m.json) != "",
         select: %{
           id: m.rowid,
           date: fragment("datetime(? -> 'message' -> 'date', 'unixepoch')", m.json),
           content: fragment("? -> 'message' ->> 'text'", m.json)
         }
+      )
 
     Skaz.Repo.all(q)
+    |> Enum.map(fn %{content: content} = message ->
+      case Earmark.as_html(content) do
+        {:ok, html, _} -> %{message | content: {:safe, html}}
+        _error -> message
+      end
+    end)
   end
 end
