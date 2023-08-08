@@ -40,7 +40,7 @@ RUN mix release
 
 FROM litestream/litestream:0.3.9 AS litestream
 
-FROM alpine:3.18.0
+FROM alpine:3.18.3
 
 RUN apk add --no-cache --update openssl libstdc++ ncurses
 
