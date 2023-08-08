@@ -38,7 +38,7 @@ COPY config/runtime.exs config/
 COPY rel rel
 RUN mix release
 
-FROM litestream/litestream:0.3.9 AS litestream
+FROM litestream/litestream:0.3.10 AS litestream
 
 FROM alpine:3.18.0
 
